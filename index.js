@@ -1,7 +1,11 @@
+const express = require('express');
 const { Client } = require('pg');
 require('dotenv').config();
 
-// Create a new PostgreSQL client
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Create a PostgreSQL client
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
@@ -12,17 +16,18 @@ client.connect()
   .then(() => console.log("✅ Connected to PostgreSQL!"))
   .catch(err => console.error("❌ Connection error:", err));
 
-// Fetch data from the "user" table
-const fetchUsers = async () => {
+// API Endpoint to fetch users
+app.get('/users', async (req, res) => {
   try {
-    const result = await client.query('SELECT * FROM "users"'); // Fetch all rows
-    console.log("📌 Users Data:", result.rows); // Display data in console
+    const result = await client.query('SELECT * FROM "users"'); // Fetch all users
+    res.json(result.rows); // Send data as JSON response
   } catch (err) {
     console.error("❌ Error fetching data:", err);
-  } finally {
-    client.end(); // Close the connection after fetching
+    res.status(500).json({ error: "Database error" });
   }
-};
+});
 
-// Call the function
-fetchUsers();
+// Start the Express server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
