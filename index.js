@@ -19,7 +19,7 @@ client.connect()
 // API Endpoint to fetch users
 app.get('/users', async (req, res) => {
   try {
-    const result = await client.query('SELECT * FROM "users"'); // Fetch all users
+    const result = await client.query('SELECT * FROM "employees"'); // Fetch all users
     res.json(result.rows); // Send data as JSON response
   } catch (err) {
     console.error("❌ Error fetching data:", err);
